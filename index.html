@@ -69,32 +69,32 @@
     <!-- 1. Switch: 50 / 100 minutes -->
     <div class="row" style="margin-bottom:8px">
       <div class="label-row">
-        <div class="label">Available flight time</div>
+        <div class="label">Конфігурація</div>
         <div class="value-pill" id="timePill" style="display: none;">50 min</div>
       </div>
       <div style="margin-top:6px">
         <div class="toggle" role="tablist" aria-label="Select flight time">
-          <button id="t50" class="active" role="tab" aria-selected="true">50 minutes</button>
-          <button id="t100" role="tab" aria-selected="false">100 minutes</button>
+          <button id="t50" class="active" role="tab" aria-selected="true">16/50</button>
+          <button id="t100" role="tab" aria-selected="false">33/100</button>
         </div>
       </div>
     </div>
 
     <!-- Wind speed -->
     <div class="row" style="margin-top: 20px;">
-      <div class="label-row"><div class="label">Wind speed</div><div class="value-pill" id="windSpeedP">1 m/s</div></div>
+      <div class="label-row"><div class="label">Швидкість вітру</div><div class="value-pill" id="windSpeedP">1 m/s</div></div>
       <input id="windSpeed" type="range" min="1" max="15" value="1">
     </div>
 
     <!-- Wind direction -->
     <div class="row" style="margin-top: 20px;">
-      <div class="label-row"><div class="label">Wind direction</div><div class="value-pill" id="windDirP">0°</div></div>
+      <div class="label-row"><div class="label">Напрямок вітру</div><div class="value-pill" id="windDirP">0°</div></div>
       <input id="windDir" type="range" min="0" max="360" value="0">
     </div>
 
     <!-- Heading -->
     <div class="row" style="margin-top: 20px;">
-      <div class="label-row"><div class="label">Heading</div><div class="value-pill" id="headingP">0°</div></div>
+      <div class="label-row"><div class="label">Напрямок доставки</div><div class="value-pill" id="headingP">0°</div></div>
       <input id="heading" type="range" min="0" max="360" value="0">
     </div>
 
@@ -123,12 +123,28 @@
     <!-- Outputs -->
     <div class="row">
       <div style="display:flex;justify-content:space-between">
-        <div><div class="output-large" id="rangeOut">— km</div><div class="output-sub">Max range on heading</div></div>
+        <div><div class="output-large" id="rangeOut">— km</div><div class="output-sub">Максимальна відстань доставки</div></div>
         <div style="text-align:right"><div style="font-weight:700">Vₐ = 22 m/s</div><div class="output-sub" id="enduranceOut">— s</div></div>
       </div>
       <div class="output-sub" id="logicText"></div>
     </div>
+
+    <br/>
+    <br/>
+    <br/>
+
   </section>
+
+  <br/>
+  <br/>
+  <br/>
+  <br/>
+  <br/>
+  <br/>
+  <br/>
+  <br/>
+  <br/>
+
 </div>
 
 <script>
@@ -209,10 +225,13 @@
     const ang=clientToAngle(e.clientX,e.clientY);
     // closer to outer? wind; closer to inner? heading
     const dist=Math.hypot(e.clientX,e.clientY);
-    drag=(Math.abs(ang-heading.value)<Math.abs(ang-windDir.value)?'heading':'wind');
-    if(Math.abs(ang-heading.value)<30)drag='heading'; else drag='wind';
+    
+    // drag = (Math.abs(ang-heading.value) < Math.abs(ang-windDir.value) ? 'heading' : 'wind');
+    if(Math.abs(ang-heading.value) < 30) drag='heading'; else drag='wind';
+
     if(drag==='wind')windDir.value=Math.round(ang); else heading.value=Math.round(ang);
-    update();e.preventDefault();
+    update();
+    e.preventDefault();
   });
   svg.addEventListener('pointermove',(e)=>{if(!drag)return;const ang=clientToAngle(e.clientX,e.clientY);if(drag==='wind')windDir.value=Math.round(ang);else heading.value=Math.round(ang);update();});
   svg.addEventListener('pointerup',()=>drag=null);
