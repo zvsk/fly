@@ -3,431 +3,222 @@
 <head>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover" />
-<title>Flight Range — Triangle of Velocities</title>
+<title>Range — Triangle of Velocities</title>
 <style>
+  /* ===== Dark Theme ===== */
   :root{
-    --bg: #0f1112;
-    --card:#0b0c0d;
-    --muted:#9aa0a6;
-    --accent:#ffffff;
-    --glass: rgba(255,255,255,0.03);
+    --bg:#0b0c0d;
+    --card:#16181a;
+    --muted:#8c9197;
+    --text:#f6f7f9;
+    --glass: rgba(255,255,255,0.05);
+    --accent-blue:#2b9cff;
+    --accent-green:#3ac77d;
   }
-  html,body{height:100%;margin:0;font-family:Inter, ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial;}
-  body{
-    background:linear-gradient(180deg,#0b0c0d 0%, #0f1112 100%);
-    color:var(--accent);
-    -webkit-font-smoothing:antialiased;
-    display:flex;align-items:flex-start;justify-content:center;padding:18px;
-  }
+  html,body{height:100%;margin:0;font-family:Inter,ui-sans-serif,system-ui,-apple-system,"Segoe UI",Roboto,"Helvetica Neue",Arial;background:var(--bg);color:var(--text);-webkit-font-smoothing:antialiased;}
+  .app{max-width:460px;margin:12px auto;padding:14px;box-sizing:border-box;}
 
-  .wrap{
-    width:100%;
-    max-width:420px;
-    background: linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));
-    border-radius:18px;
-    padding:14px;
-    box-sizing:border-box;
-    box-shadow: 0 6px 30px rgba(0,0,0,0.6);
-  }
+  header{margin-bottom:10px;}
+  h1{font-size:20px;margin:0;font-weight:800;letter-spacing:-0.02em}
+  p.lead{margin:6px 0 0;color:var(--muted);font-size:13px}
 
-  header{
-    display:flex;align-items:flex-start;gap:12px;margin-bottom:8px;
-  }
-  h1{
-    font-size:20px;margin:0;line-height:1.05;font-weight:700;
-    letter-spacing:-0.02em;
-  }
-  p.lead{margin:0;color:var(--muted);font-size:12px}
+  .card{background:var(--card);border-radius:14px;padding:12px;box-shadow:0 6px 20px rgba(0,0,0,0.3);margin-top:12px}
+  .row{display:flex;flex-direction:column;gap:8px}
+  .label-row{display:flex;justify-content:space-between;align-items:center}
+  .label{font-size:13px;color:var(--muted)}
+  .value-pill{background:var(--glass);padding:6px 10px;border-radius:10px;font-weight:700;font-size:13px;min-width:68px;text-align:center;color:var(--text)}
 
-  .controls{
-    display:grid;
-    grid-template-columns: 1fr;
-    gap:12px;
-    margin-top:12px;
-  }
+  .toggle{display:inline-flex;border-radius:12px;overflow:hidden;border:1px solid rgba(255,255,255,0.1)}
+  .toggle button{min-width:96px;padding:8px 12px;border:0;background:transparent;font-weight:700;color:var(--muted);font-size:14px}
+  .toggle button.active{background:rgba(255,255,255,0.1);color:var(--text)}
 
-  .row {
-    background:var(--glass);
-    border-radius:12px;
-    padding:10px;
-    display:flex;flex-direction:column;gap:8px;
-  }
+  input[type="range"]{width:100%;height:36px;background:transparent;appearance:none}
+  input[type="range"]::-webkit-slider-runnable-track{height:8px;border-radius:8px;background:linear-gradient(90deg, rgba(255,255,255,0.15), rgba(255,255,255,0.05))}
+  input[type="range"]::-webkit-slider-thumb{appearance:none;margin-top:-7px;width:22px;height:22px;border-radius:50%;background:#fff;box-shadow:0 2px 8px rgba(0,0,0,0.5)}
 
-  .switch{
-    display:flex;align-items:center;justify-content:space-between;
-    gap:12px;
-  }
-  .toggle {
-    background:transparent;border:1px solid rgba(255,255,255,0.08);
-    padding:6px;border-radius:10px;display:flex;gap:6px;
-  }
-  .toggle button{
-    min-width:64px;padding:8px 10px;border-radius:8px;border:0;background:transparent;color:var(--muted);
-    font-weight:600; font-size:13px;
-  }
-  .toggle button.active{color:var(--accent);background: rgba(255,255,255,0.04);}
+  .wheel-wrap{display:flex;justify-content:center;padding:12px}
+  svg.wheel{width:100%;max-width:360px;height:auto;touch-action:none;user-select:none}
 
-  label.small{font-size:12px;color:var(--muted);display:flex;justify-content:space-between;align-items:center}
+  .output-large{font-size:28px;font-weight:900}
+  .output-sub{color:var(--muted);font-size:13px;margin-top:6px}
 
-  .range-row{display:flex;gap:12px;align-items:center;}
-  input[type=range]{
-    -webkit-appearance:none;width:100%;
-    background:transparent;height:36px;
-  }
-  input[type=range]:focus{outline:none}
-  input[type=range]::-webkit-slider-runnable-track{height:6px;border-radius:6px;background:rgba(255,255,255,0.06)}
-  input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;margin-top:-8px;width:22px;height:22px;border-radius:50%;background:#fff;box-shadow:0 2px 6px rgba(0,0,0,0.6)}
-  .value-badge{min-width:62px;text-align:center;font-weight:700;background:rgba(255,255,255,0.03);border-radius:10px;padding:6px;font-size:14px}
+  footer{margin-top:12px;color:var(--muted);font-size:12px;text-align:center}
 
-  /* SVG wheel */
-  .wheel-wrap{display:flex;justify-content:center;padding:10px}
-  .wheel{
-    width:100%;
-    max-width:300px;
-    touch-action:none;
-    user-select:none;
-  }
-
-  .outputs{
-    margin-top:12px;display:flex;flex-direction:column;gap:10px;
-  }
-  .out-card{
-    background: linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));
-    border-radius:12px;padding:12px;
-  }
-  .big-number{font-size:28px;font-weight:800;letter-spacing:-0.02em}
-  .desc{color:var(--muted);font-size:13px;line-height:1.3;margin-top:6px}
-
-  footer{margin-top:14px;color:var(--muted);font-size:12px;text-align:center}
-
-  /* responsive tweaks */
   @media (max-width:420px){
-    .wrap{padding:12px;border-radius:14px}
-    .big-number{font-size:24px}
+    .toggle button{min-width:84px}
+    .value-pill{min-width:56px;font-size:12px}
+    .output-large{font-size:22px}
   }
 </style>
 </head>
 <body>
-<div class="wrap" role="application" aria-label="Flight range calculator">
-  <header>
-    <div style="flex:1">
-      <h1>Доставка чебуреків</h1>
-      <p class="lead">Мінімалістичний калькулятор для мобільних. Торкай колесо або використай слайдери.</p>
-    </div>
+<div class="app">
+
+  <header style="margin-top: 60px;">
+    <h1>Доставка чебуреків</h1>
+    <p class="lead">Dark theme. Drag arrows on dial or use sliders — live updates.</p>
   </header>
 
-  <section class="controls" aria-live="polite">
-    <div class="row">
-      <div class="switch">
-        <div>
-          <label class="small">Available nominal range</label>
-          <div style="height:6px"></div>
-          <div class="toggle" role="tablist" aria-label="Select nominal range">
-            <button id="range50" class="active" role="tab" aria-selected="true">50 km</button>
-            <button id="range100" role="tab" aria-selected="false">100 km</button>
-          </div>
+  <section class="card" style="margin-top: 20px;">
+    <!-- Switch -->
+    <!-- <div class="row">
+      <div class="label-row"><div class="label">Available flight time</div><div class="value-pill" id="timePill">50 min</div></div>
+      <div class="toggle"><button id="t50" class="active">50 minutes</button><button id="t100">100 minutes</button></div>
+    </div> -->
+    <!-- Controls card -->
+    <!-- 1. Switch: 50 / 100 minutes -->
+    <div class="row" style="margin-bottom:8px">
+      <div class="label-row">
+        <div class="label">Available flight time</div>
+        <div class="value-pill" id="timePill" style="display: none;">50 min</div>
+      </div>
+      <div style="margin-top:6px">
+        <div class="toggle" role="tablist" aria-label="Select flight time">
+          <button id="t50" class="active" role="tab" aria-selected="true">50 minutes</button>
+          <button id="t100" role="tab" aria-selected="false">100 minutes</button>
         </div>
-        <div class="value-badge" id="selectedRange">50 km</div>
       </div>
     </div>
 
+    <!-- Wind speed -->
+    <div class="row" style="margin-top: 20px;">
+      <div class="label-row"><div class="label">Wind speed</div><div class="value-pill" id="windSpeedP">1 m/s</div></div>
+      <input id="windSpeed" type="range" min="1" max="15" value="1">
+    </div>
+
+    <!-- Wind direction -->
+    <div class="row" style="margin-top: 20px;">
+      <div class="label-row"><div class="label">Wind direction</div><div class="value-pill" id="windDirP">0°</div></div>
+      <input id="windDir" type="range" min="0" max="360" value="0">
+    </div>
+
+    <!-- Heading -->
+    <div class="row" style="margin-top: 20px;">
+      <div class="label-row"><div class="label">Heading</div><div class="value-pill" id="headingP">0°</div></div>
+      <input id="heading" type="range" min="0" max="360" value="0">
+    </div>
+
+    <!-- Wheel -->
+    <div class="wheel-wrap">
+      <svg id="wheel" class="wheel" viewBox="-160 -160 320 320">
+        <circle cx="0" cy="0" r="120" fill="none" stroke="rgba(255,255,255,0.08)" stroke-width="8"/>
+        <circle cx="0" cy="0" r="76" fill="none" stroke="rgba(255,255,255,0.05)"/>
+        <g id="ticks"></g>
+        <g id="nums"></g>
+
+        <!-- Wind arrow (outer) -->
+        <g id="windG" transform="rotate(0)">
+          <polygon id="windArrow" points="-10,-120 10,-120 0,-140" fill="var(--accent-blue)"/>
+          <circle cx="0" cy="0" r="6" fill="var(--accent-blue)"/>
+        </g>
+
+        <!-- Heading arrow (inner, closer to center) -->
+        <g id="headG" transform="rotate(0)">
+          <polygon id="headArrow" points="-8,-90 8,-90 0,-108" fill="var(--accent-green)"/>
+          <circle cx="0" cy="0" r="6" fill="var(--accent-green)"/>
+        </g>
+      </svg>
+    </div>
+
+    <!-- Outputs -->
     <div class="row">
-      <label class="small">Wind speed <span id="windSpeedLabel" style="font-weight:700">1 m/s</span></label>
-      <div class="range-row">
-        <input id="windSpeed" type="range" min="1" max="15" step="1" value="1" aria-label="Wind speed m per second">
-        <div class="value-badge" id="windSpeedVal">1</div>
+      <div style="display:flex;justify-content:space-between">
+        <div><div class="output-large" id="rangeOut">— km</div><div class="output-sub">Max range on heading</div></div>
+        <div style="text-align:right"><div style="font-weight:700">Vₐ = 22 m/s</div><div class="output-sub" id="enduranceOut">— s</div></div>
       </div>
+      <div class="output-sub" id="logicText"></div>
     </div>
-
-    <div class="row">
-      <label class="small">Wind direction <span id="windDirLabel" style="font-weight:700">0°</span></label>
-      <div class="range-row">
-        <input id="windDirRange" type="range" min="0" max="360" step="1" value="0" aria-label="Wind direction degrees">
-        <div class="value-badge" id="windDirVal">0°</div>
-      </div>
-    </div>
-
-    <div class="row">
-      <label class="small">Heading (course) <span id="headingLabel" style="font-weight:700">0°</span></label>
-      <div class="range-row">
-        <input id="headingRange" type="range" min="0" max="360" step="1" value="0" aria-label="Heading degrees">
-        <div class="value-badge" id="headingVal">0°</div>
-      </div>
-    </div>
-
-    <div class="row">
-      <label class="small">Direction wheel — торкнись і тягни стрілки</label>
-      <div class="wheel-wrap">
-        <!-- SVG wheel with ticks and two draggable handles -->
-        <svg id="wheel" class="wheel" viewBox="-160 -160 320 320" role="img" aria-label="Direction wheel">
-          <defs>
-            <linearGradient id="g1" x1="0" x2="1">
-              <stop offset="0" stop-color="white" stop-opacity="0.95"/>
-              <stop offset="1" stop-color="white" stop-opacity="0.5"/>
-            </linearGradient>
-          </defs>
-
-          <!-- outer circle -->
-          <circle cx="0" cy="0" r="120" fill="none" stroke="rgba(255,255,255,0.03)" stroke-width="8"/>
-          <!-- ticks -->
-          <g id="ticks"></g>
-          <!-- angle numeration -->
-          <g id="numeration"></g>
-
-          <!-- wind arrow (blueish) -->
-          <g id="windGroup" transform="rotate(0)">
-            <line id="windLine" x1="0" y1="0" x2="0" y2="-95" stroke="url(#g1)" stroke-width="4" stroke-linecap="round" />
-            <polygon id="windHead" points="-6,-95 6,-95 0,-110" fill="rgba(255,255,255,0.95)" opacity="0.9"/>
-            <circle cx="0" cy="0" r="6" fill="rgba(255,255,255,0.06)"/>
-          </g>
-
-          <!-- heading arrow (accent different) -->
-          <g id="headingGroup" transform="rotate(0)">
-            <line id="headingLine" x1="0" y1="0" x2="0" y2="-70" stroke="rgba(255,255,255,0.7)" stroke-width="3" stroke-linecap="round" stroke-dasharray="4 3"/>
-            <polygon id="headingHead" points="-5,-70 5,-70 0,-82" fill="rgba(255,255,255,0.7)"/>
-            <circle cx="0" cy="0" r="4" fill="rgba(255,255,255,0.06)"/>
-          </g>
-
-          <!-- draggable "handles" (invisible but larger for touch) -->
-          <circle id="windHandle" cx="0" cy="-95" r="14" fill="transparent" style="cursor:grab"/>
-          <circle id="headingHandle" cx="0" cy="-70" r="14" fill="transparent" style="cursor:grab"/>
-
-        </svg>
-      </div>
-    </div>
-
-    <div class="outputs">
-      <div class="out-card" aria-live="polite">
-        <div style="display:flex;justify-content:space-between;align-items:center">
-          <div>
-            <div class="big-number" id="rangeOut">— km</div>
-            <div class="desc">Максимальна дальність уздовж обраного курсу</div>
-          </div>
-          <div style="text-align:right">
-            <div style="font-size:12px;color:var(--muted)">Vₐ = 22 м/с</div>
-            <div style="font-size:12px;color:var(--muted)" id="enduranceLabel">Endurance: — s</div>
-          </div>
-        </div>
-        <div class="desc" id="logicText" style="margin-top:10px"></div>
-      </div>
-    </div>
-
-    <footer>Проведи пальцем по колесу, або зміни слайдери — результати оновляться миттєво.</footer>
   </section>
 </div>
 
 <script>
-(function(){
-  // Constants
-  const Va = 22.0; // m/s (airspeed)
-  // DOM
-  const range50Btn = document.getElementById('range50');
-  const range100Btn = document.getElementById('range100');
-  const selectedRangeEl = document.getElementById('selectedRange');
-  const windSpeed = document.getElementById('windSpeed');
-  const windSpeedVal = document.getElementById('windSpeedVal');
-  const windSpeedLabel = document.getElementById('windSpeedLabel');
-  const windDirRange = document.getElementById('windDirRange');
-  const windDirVal = document.getElementById('windDirVal');
-  const windDirLabel = document.getElementById('windDirLabel');
-  const headingRange = document.getElementById('headingRange');
-  const headingVal = document.getElementById('headingVal');
-  const headingLabel = document.getElementById('headingLabel');
+(()=> {
+  const Va=22;
+  let minutes=50;
+  const el=(id)=>document.getElementById(id);
+  const t50=el('t50'),t100=el('t100'),timePill=el('timePill');
+  const windSpeed=el('windSpeed'),windSpeedP=el('windSpeedP');
+  const windDir=el('windDir'),windDirP=el('windDirP');
+  const heading=el('heading'),headingP=el('headingP');
+  const windG=el('windG'),headG=el('headG');
+  const rangeOut=el('rangeOut'),enduranceOut=el('enduranceOut'),logicText=el('logicText');
+  const svg=el('wheel'),ticksG=el('ticks'),numsG=el('nums');
 
-  const rangeOut = document.getElementById('rangeOut');
-  const enduranceLabel = document.getElementById('enduranceLabel');
-  const logicText = document.getElementById('logicText');
-
-  let selectedNominalKm = 50; // default
-
-  // wheel elements
-  const svg = document.getElementById('wheel');
-  const windGroup = document.getElementById('windGroup');
-  const headingGroup = document.getElementById('headingGroup');
-  const windHandle = document.getElementById('windHandle');
-  const headingHandle = document.getElementById('headingHandle');
-
-  // initialize ticks and numeration
-  (function drawTicks(){
-    const ticks = document.getElementById('ticks');
-    const nums = document.getElementById('numeration');
-    for(let a=0;a<360;a+=10){
-      const rad = (a-90) * Math.PI/180;
-      const rOut = 120, rIn = (a%30===0)?96:104;
-      const x1 = Math.cos(rad)*rIn, y1 = Math.sin(rad)*rIn;
-      const x2 = Math.cos(rad)*rOut, y2 = Math.sin(rad)*rOut;
-      const line = document.createElementNS('http://www.w3.org/2000/svg','line');
-      line.setAttribute('x1', x1); line.setAttribute('y1', y1);
-      line.setAttribute('x2', x2); line.setAttribute('y2', y2);
-      line.setAttribute('stroke', 'rgba(255,255,255,0.04)');
-      line.setAttribute('stroke-width', (a%30===0)?2:1);
-      ticks.appendChild(line);
-      if(a%30===0){
-        const txt = document.createElementNS('http://www.w3.org/2000/svg','text');
-        const rr = 76;
-        txt.setAttribute('x', Math.cos(rad)*(rr));
-        txt.setAttribute('y', Math.sin(rad)*(rr)+5);
-        txt.setAttribute('text-anchor','middle');
-        txt.setAttribute('font-size','10');
-        txt.setAttribute('fill','rgba(255,255,255,0.35)');
-        txt.textContent = a.toString();
-        nums.appendChild(txt);
-      }
-    }
-  })();
-
-  // utility: normalize 0..360
-  function norm360(a){ a = a % 360; if (a<0) a+=360; return a; }
-
-  // update UI values
-  function updateUI(){
-    windSpeedVal.textContent = windSpeed.value;
-    windSpeedLabel.textContent = windSpeed.value + ' m/s';
-    windDirVal.textContent = windDirRange.value + '°';
-    windDirLabel.textContent = windDirRange.value + '°';
-    headingVal.textContent = headingRange.value + '°';
-    headingLabel.textContent = headingRange.value + '°';
-    selectedRangeEl.textContent = selectedNominalKm + ' km';
-    range50Btn.classList.toggle('active', selectedNominalKm===50);
-    range100Btn.classList.toggle('active', selectedNominalKm===100);
-    range50Btn.setAttribute('aria-selected', selectedNominalKm===50);
-    range100Btn.setAttribute('aria-selected', selectedNominalKm===100);
-    // rotate groups
-    windGroup.setAttribute('transform','rotate('+windDirRange.value+')');
-    headingGroup.setAttribute('transform','rotate('+headingRange.value+')');
-
-    // set draggable handles positions (approx)
-    const radW = (parseFloat(windDirRange.value)-90)*Math.PI/180;
-    const radH = (parseFloat(headingRange.value)-90)*Math.PI/180;
-    const wx = Math.cos(radW)*95, wy = Math.sin(radW)*95;
-    const hx = Math.cos(radH)*70, hy = Math.sin(radH)*70;
-    windHandle.setAttribute('cx', wx); windHandle.setAttribute('cy', wy);
-    headingHandle.setAttribute('cx', hx); headingHandle.setAttribute('cy', hy);
-
-    computeAndDisplay();
-  }
-
-  // compute formula and show
-  function computeAndDisplay(){
-    const W = Number(windSpeed.value);
-    const windDir = Number(windDirRange.value);
-    const heading = Number(headingRange.value);
-
-    // nominal range selected in km -> compute endurance seconds as nominalKm*1000 / Va
-    const endurance = (selectedNominalKm*1000)/Va; // seconds
-    enduranceLabel.textContent = 'Endurance: ' + Math.round(endurance) + ' s';
-
-    // relative angle phi = wind - heading
-    let phi = (windDir - heading) * Math.PI/180;
-    // normalize to (-PI,PI) for sin/cos numeric stability
-    while(phi > Math.PI) phi -= 2*Math.PI;
-    while(phi <= -Math.PI) phi += 2*Math.PI;
-
-    const W_cross = W * Math.sin(phi);
-    const W_along = W * Math.cos(phi);
-
-    // check flyable: |W_cross| <= Va
-    const flyable = Math.abs(W_cross) <= Va + 1e-9;
-
-    let Va_along = 0;
-    let Vg = 0;
-    if(flyable){
-      Va_along = Math.sqrt(Math.max(Va*Va - W_cross*W_cross, 0));
-      Vg = Va_along + W_along;
-      if(Vg < 1e-9) Vg = 0;
-    } else {
-      Va_along = NaN; Vg = 0;
-    }
-    const range_m = Vg * endurance;
-    const range_km = Math.max(0, range_m/1000);
-
-    rangeOut.textContent = (flyable ? range_km.toFixed(2) : '0.00') + ' km';
-
-    // concise logic text
-    const lines = [];
-    lines.push(`Selected nominal range (no-wind): ${selectedNominalKm} km → endurance ≈ ${Math.round(endurance)} s.`);
-    lines.push(`Vₐ=${Va} m/s, W=${W} m/s, windDir=${windDir}°, heading=${heading}°.`);
-    if(!flyable){
-      lines.push(`Поперечний компонент вітру |W_cross| = ${Math.abs(W_cross).toFixed(2)} m/s > Vₐ — не можна утримати курс при таких умовах → дальність 0 km.`);
-    } else {
-      lines.push(`W_along = ${W_along.toFixed(2)} m/s, W_cross = ${W_cross.toFixed(2)} m/s.`);
-      lines.push(`Va_along = √(Vₐ² − W_cross²) = ${Va_along.toFixed(2)} m/s → приземна швидкість по курсу Vg = ${Vg.toFixed(2)} m/s.`);
-      lines.push(`Розрахована дальність = Vg × endurance = ${range_km.toFixed(2)} km.`);
-    }
-    logicText.textContent = lines.join(' ');
-  }
-
-  // events
-  range50Btn.addEventListener('click', ()=>{ selectedNominalKm = 50; updateUI(); });
-  range100Btn.addEventListener('click', ()=>{ selectedNominalKm = 100; updateUI(); });
-
-  windSpeed.addEventListener('input', updateUI);
-  windDirRange.addEventListener('input', updateUI);
-  headingRange.addEventListener('input', updateUI);
-
-  // Pointer interactions for wheel (touch-friendly)
-  function clientToSvgPoint(clientX, clientY){
-    const pt = svg.createSVGPoint();
-    pt.x = clientX; pt.y = clientY;
-    const ctm = svg.getScreenCTM().inverse();
-    const sp = pt.matrixTransform(ctm);
-    return {x: sp.x, y: sp.y};
-  }
-
-  let dragging = null; // 'wind' or 'heading' or null
-
-  function startDrag(kind, evt){
-    dragging = kind;
-    evt.preventDefault();
-    // set pointer capture if available
-    const target = (kind==='wind') ? windHandle : headingHandle;
-    try{ target.setPointerCapture(evt.pointerId); }catch(e){}
-  }
-
-  function moveDrag(evt){
-    if(!dragging) return;
-    const p = clientToSvgPoint(evt.clientX, evt.clientY);
-    // angle from center to point in degrees, 0 at top
-    let ang = Math.atan2(p.y, p.x) * 180/Math.PI + 90;
-    ang = (ang + 360) % 360;
-    if(dragging === 'wind'){
-      windDirRange.value = Math.round(ang);
-      windDirRange.dispatchEvent(new Event('input',{bubbles:true}));
-    } else if(dragging==='heading'){
-      headingRange.value = Math.round(ang);
-      headingRange.dispatchEvent(new Event('input',{bubbles:true}));
+  // draw ticks
+  for(let a=0;a<360;a+=10){
+    const rad=(a-90)*Math.PI/180;
+    const rOut=120, rIn=(a%30===0?108:114);
+    const x1=Math.cos(rad)*rIn,y1=Math.sin(rad)*rIn;
+    const x2=Math.cos(rad)*rOut,y2=Math.sin(rad)*rOut;
+    const line=document.createElementNS('http://www.w3.org/2000/svg','line');
+    line.setAttribute('x1',x1);line.setAttribute('y1',y1);
+    line.setAttribute('x2',x2);line.setAttribute('y2',y2);
+    line.setAttribute('stroke','rgba(255,255,255,0.15)');
+    line.setAttribute('stroke-width',(a%30===0)?2:1);
+    ticksG.appendChild(line);
+    if(a%30===0){
+      const txt=document.createElementNS('http://www.w3.org/2000/svg','text');
+      txt.setAttribute('x',Math.cos(rad)*76);
+      txt.setAttribute('y',Math.sin(rad)*76+4);
+      txt.setAttribute('fill','rgba(255,255,255,0.5)');
+      txt.setAttribute('font-size','10');txt.setAttribute('text-anchor','middle');
+      txt.textContent=a;
+      numsG.appendChild(txt);
     }
   }
 
-  function endDrag(evt){
-    if(!dragging) return;
-    dragging = null;
+  function deg2rad(d){return d*Math.PI/180;}
+  function update(){
+    windSpeedP.textContent=windSpeed.value+' m/s';
+    windDirP.textContent=windDir.value+'°';
+    headingP.textContent=heading.value+'°';
+    timePill.textContent=minutes+' min';
+    windG.setAttribute('transform','rotate('+windDir.value+')');
+    headG.setAttribute('transform','rotate('+heading.value+')');
+    compute();
+  }
+  function compute(){
+    const W=+windSpeed.value, wd=+windDir.value, hd=+heading.value;
+    const endurance=minutes*60;enduranceOut.textContent=endurance+' s';
+    let phi=deg2rad(wd-hd);while(phi>Math.PI)phi-=2*Math.PI;while(phi<-Math.PI)phi+=2*Math.PI;
+    const Wc=W*Math.sin(phi), Wa=W*Math.cos(phi);
+    let flyable=Math.abs(Wc)<=Va;
+    let Va_along=Math.sqrt(Math.max(Va*Va-Wc*Wc,0));
+    let Vg=flyable?(Va_along+Wa):0;
+    if(Vg<0)Vg=0;
+    const range=Vg*endurance/1000;
+    rangeOut.textContent=(flyable?range.toFixed(2):'0.00')+' km';
+    logicText.textContent=`Va=${Va} m/s, W=${W} m/s, wind=${wd}°, heading=${hd}°. `+
+      (flyable?`Vg=${Vg.toFixed(2)} m/s, Range=${range.toFixed(2)} km`:
+      `Crosswind too strong → 0 km`);
   }
 
-  // pointerdown on handles or groups
-  windHandle.addEventListener('pointerdown', (e)=>startDrag('wind',e));
-  headingHandle.addEventListener('pointerdown', (e)=>startDrag('heading',e));
-  // also allow pressing near arrow tips (for easier touch)
-  windGroup.addEventListener('pointerdown', (e)=>startDrag('wind',e));
-  headingGroup.addEventListener('pointerdown', (e)=>startDrag('heading',e));
+  t50.onclick=()=>{minutes=50;t50.classList.add('active');t100.classList.remove('active');update();}
+  t100.onclick=()=>{minutes=100;t100.classList.add('active');t50.classList.remove('active');update();}
+  windSpeed.oninput=update;windDir.oninput=update;heading.oninput=update;
 
-  window.addEventListener('pointermove', moveDrag);
-  window.addEventListener('pointerup', endDrag);
-  window.addEventListener('pointercancel', endDrag);
-
-  // init
-  updateUI();
-
-  // Accessibility: keyboard arrow keys to rotate active control
-  windDirRange.addEventListener('keydown', (e)=>{
-    if(e.key==='ArrowLeft' || e.key==='ArrowDown'){ windDirRange.value = (parseInt(windDirRange.value)+359)%360; updateUI(); e.preventDefault(); }
-    if(e.key==='ArrowRight' || e.key==='ArrowUp'){ windDirRange.value = (parseInt(windDirRange.value)+1)%360; updateUI(); e.preventDefault(); }
+  // drag on wheel
+  function clientToAngle(x,y){
+    const pt=svg.createSVGPoint();pt.x=x;pt.y=y;
+    const sp=pt.matrixTransform(svg.getScreenCTM().inverse());
+    let ang=Math.atan2(sp.y,sp.x)*180/Math.PI+90;
+    return (ang+360)%360;
+  }
+  let drag=null;
+  svg.addEventListener('pointerdown',(e)=>{
+    const ang=clientToAngle(e.clientX,e.clientY);
+    // closer to outer? wind; closer to inner? heading
+    const dist=Math.hypot(e.clientX,e.clientY);
+    drag=(Math.abs(ang-heading.value)<Math.abs(ang-windDir.value)?'heading':'wind');
+    if(Math.abs(ang-heading.value)<30)drag='heading'; else drag='wind';
+    if(drag==='wind')windDir.value=Math.round(ang); else heading.value=Math.round(ang);
+    update();e.preventDefault();
   });
-  headingRange.addEventListener('keydown', (e)=>{
-    if(e.key==='ArrowLeft' || e.key==='ArrowDown'){ headingRange.value = (parseInt(headingRange.value)+359)%360; updateUI(); e.preventDefault(); }
-    if(e.key==='ArrowRight' || e.key==='ArrowUp'){ headingRange.value = (parseInt(headingRange.value)+1)%360; updateUI(); e.preventDefault(); }
-  });
+  svg.addEventListener('pointermove',(e)=>{if(!drag)return;const ang=clientToAngle(e.clientX,e.clientY);if(drag==='wind')windDir.value=Math.round(ang);else heading.value=Math.round(ang);update();});
+  svg.addEventListener('pointerup',()=>drag=null);
+  svg.addEventListener('pointerleave',()=>drag=null);
 
+  update();
 })();
 </script>
 </body>
