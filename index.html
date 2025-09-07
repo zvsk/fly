@@ -68,6 +68,35 @@
   input[type="range"]::-ms-thumb {
     pointer-events: all;
   }
+
+  /*  */
+
+  /*  */
+
+  input[type="range"].heading::-webkit-slider-thumb {
+    background-color: var(--accent-green);
+  }
+
+  input[type="range"].heading::-moz-range-thumb {
+    background-color: var(--accent-green);
+  }
+
+  input[type="range"].heading::-ms-thumb {
+    background-color: var(--accent-green);
+  }
+
+
+  input[type="range"].wind::-webkit-slider-thumb {
+    background-color: var(--accent-blue);
+  }
+
+  input[type="range"].wind::-moz-range-thumb {
+    background-color: var(--accent-blue);
+  }
+
+  input[type="range"].wind::-ms-thumb {
+    background-color: var(--accent-blue);
+  }
 </style>
 </head>
 <body>
@@ -100,21 +129,21 @@
     </div>
 
     <!-- Wind speed -->
-    <div class="row" style="margin-top: 20px;">
+    <div class="row" style="margin-top: 30px;">
       <div class="label-row"><div class="label">Швидкість вітру</div><div class="value-pill" id="windSpeedP">1 m/s</div></div>
-      <input id="windSpeed" type="range" min="1" max="15" value="1">
+      <input id="windSpeed" class="wind" type="range" min="1" max="15" value="1">
     </div>
 
     <!-- Wind direction -->
-    <div class="row" style="margin-top: 20px;">
+    <div class="row" style="margin-top: 0px;">
       <div class="label-row"><div class="label">Напрямок вітру</div><div class="value-pill" id="windDirP">0°</div></div>
-      <input id="windDir" type="range" min="0" max="360" value="0">
+      <input id="windDir" class="wind" type="range" min="0" max="360" value="0">
     </div>
 
     <!-- Heading -->
-    <div class="row" style="margin-top: 20px;">
+    <div class="row" style="margin-top: 0px;">
       <div class="label-row"><div class="label">Напрямок доставки</div><div class="value-pill" id="headingP">0°</div></div>
-      <input id="heading" type="range" min="0" max="360" value="0">
+      <input id="heading" class="heading" type="range" min="0" max="360" value="0">
     </div>
 
 
@@ -128,13 +157,13 @@
 
         <!-- Wind arrow (outer) -->
         <g id="windG" transform="rotate(0)">
-          <polygon id="windArrow" points="-10,-120 10,-120 0,-140" fill="var(--accent-blue)"/>
+          <polygon id="windArrow" points="-20,-130 20,-130 0,-160" fill="var(--accent-blue)"/>
           <circle cx="0" cy="0" r="6" fill="var(--accent-blue)"/>
         </g>
 
         <!-- Heading arrow (inner, closer to center) -->
         <g id="headG" transform="rotate(0)">
-          <polygon id="headArrow" points="-8,-90 8,-90 0,-108" fill="var(--accent-green)"/>
+          <polygon id="headArrow" points="-15,-85 15,-85 0,-105" fill="var(--accent-green)"/>
           <circle cx="0" cy="0" r="6" fill="var(--accent-green)"/>
         </g>
       </svg>
@@ -244,19 +273,40 @@
     return (ang+360)%360;
   }
   let drag=null;
-  svg.addEventListener('pointerdown',(e)=>{
+
+  windG.addEventListener('pointerdown',(e)=>{
     const ang=clientToAngle(e.clientX,e.clientY);
-    // closer to outer? wind; closer to inner? heading
     const dist=Math.hypot(e.clientX,e.clientY);
     
-    drag = (Math.abs(ang-heading.value) < Math.abs(ang-windDir.value) ? 'heading' : 'wind');
-    // if(Math.abs(ang-heading.value) < 30) drag='heading'; else drag='wind';
-
+    drag = 'wind';
     if(drag==='wind')windDir.value=Math.round(ang); else heading.value=Math.round(ang);
 
     update();
     e.preventDefault();
   });
+
+  headG.addEventListener('pointerdown',(e)=>{
+    const ang=clientToAngle(e.clientX,e.clientY);
+    const dist=Math.hypot(e.clientX,e.clientY);
+    
+    drag = 'heading';
+    if(drag==='wind')windDir.value=Math.round(ang); else heading.value=Math.round(ang);
+
+    update();
+    e.preventDefault();
+  });
+
+  // svg.addEventListener('pointerdown',(e)=>{
+  //   const ang=clientToAngle(e.clientX,e.clientY);
+  //   const dist=Math.hypot(e.clientX,e.clientY);
+  //   drag = (Math.abs(ang-heading.value) < Math.abs(ang-windDir.value) ? 'heading' : 'wind');
+  //   // if(Math.abs(ang-heading.value) < 30) drag='heading'; else drag='wind';
+  //   if(drag==='wind')windDir.value=Math.round(ang); else heading.value=Math.round(ang);
+  //   update();
+  //   e.preventDefault();
+  // });
+
+
   svg.addEventListener('pointermove',(e)=>{if(!drag)return;const ang=clientToAngle(e.clientX,e.clientY);if(drag==='wind')windDir.value=Math.round(ang);else heading.value=Math.round(ang);update();});
   svg.addEventListener('pointerup',()=>drag=null);
   svg.addEventListener('pointerleave',()=>drag=null);
