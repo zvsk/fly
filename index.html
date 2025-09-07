@@ -49,14 +49,33 @@
     .value-pill{min-width:56px;font-size:12px}
     .output-large{font-size:22px}
   }
+
+  input[type="range"] {
+    pointer-events: none; /* Disable pointer events for the entire range input */
+  }
+
+  /* Re-enable pointer events for the thumb in WebKit browsers (Chrome, Safari) */
+  input[type="range"]::-webkit-slider-thumb {
+    pointer-events: all;
+  }
+
+  /* Re-enable pointer events for the thumb in Firefox */
+  input[type="range"]::-moz-range-thumb {
+    pointer-events: all;
+  }
+
+  /* Re-enable pointer events for the thumb in Internet Explorer/Edge */
+  input[type="range"]::-ms-thumb {
+    pointer-events: all;
+  }
 </style>
 </head>
 <body>
 <div class="app">
 
-  <header style="margin-top: 60px;">
+  <header style="margin-top: 40px;">
     <h1>Доставка чебуреків</h1>
-    <p class="lead">Dark theme. Drag arrows on dial or use sliders — live updates.</p>
+    <!-- <p class="lead">Dark theme. Drag arrows on dial or use sliders — live updates.</p> -->
   </header>
 
   <section class="card" style="margin-top: 20px;">
@@ -98,8 +117,9 @@
       <input id="heading" type="range" min="0" max="360" value="0">
     </div>
 
+
     <!-- Wheel -->
-    <div class="wheel-wrap">
+    <div class="wheel-wrap" style="margin-top: 30px;">
       <svg id="wheel" class="wheel" viewBox="-160 -160 320 320">
         <circle cx="0" cy="0" r="120" fill="none" stroke="rgba(255,255,255,0.08)" stroke-width="8"/>
         <circle cx="0" cy="0" r="76" fill="none" stroke="rgba(255,255,255,0.05)"/>
@@ -120,8 +140,9 @@
       </svg>
     </div>
 
+
     <!-- Outputs -->
-    <div class="row">
+    <div class="row" style="margin-top: 30px;">
       <div style="display:flex;justify-content:space-between">
         <div><div class="output-large" id="rangeOut">— km</div><div class="output-sub">Максимальна відстань доставки</div></div>
         <div style="text-align:right"><div style="font-weight:700">Vₐ = 22 m/s</div><div class="output-sub" id="enduranceOut">— s</div></div>
@@ -211,7 +232,9 @@
 
   t50.onclick=()=>{minutes=50;t50.classList.add('active');t100.classList.remove('active');update();}
   t100.onclick=()=>{minutes=100;t100.classList.add('active');t50.classList.remove('active');update();}
-  windSpeed.oninput=update;windDir.oninput=update;heading.oninput=update;
+  windSpeed.oninput=update;
+  windDir.oninput=update;
+  heading.oninput=update;
 
   // drag on wheel
   function clientToAngle(x,y){
@@ -226,10 +249,11 @@
     // closer to outer? wind; closer to inner? heading
     const dist=Math.hypot(e.clientX,e.clientY);
     
-    // drag = (Math.abs(ang-heading.value) < Math.abs(ang-windDir.value) ? 'heading' : 'wind');
-    if(Math.abs(ang-heading.value) < 30) drag='heading'; else drag='wind';
+    drag = (Math.abs(ang-heading.value) < Math.abs(ang-windDir.value) ? 'heading' : 'wind');
+    // if(Math.abs(ang-heading.value) < 30) drag='heading'; else drag='wind';
 
     if(drag==='wind')windDir.value=Math.round(ang); else heading.value=Math.round(ang);
+
     update();
     e.preventDefault();
   });
