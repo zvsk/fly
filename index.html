@@ -37,7 +37,7 @@
   input[type="range"]::-webkit-slider-thumb{appearance:none;margin-top:-7px;width:22px;height:22px;border-radius:50%;background:#fff;box-shadow:0 2px 8px rgba(0,0,0,0.5)}
 
   .wheel-wrap{display:flex;justify-content:center;padding:12px}
-  svg.wheel{width:100%;max-width:360px;height:auto;touch-action:none;user-select:none}
+  svg.wheel{width:100%;max-width:360px;height:auto;_touch-action:none;user-select:none}
 
   .output-large{font-size:28px;font-weight:900}
   .output-sub{color:var(--muted);font-size:13px;margin-top:6px}
@@ -157,13 +157,13 @@
 
         <!-- Wind arrow (outer) -->
         <g id="windG" transform="rotate(0)">
-          <polygon id="windArrow" points="-15,-130 15,-130 0,-150" fill="var(--accent-blue)"/>
+          <polygon id="windArrow" points="-18,-130 18,-130 0,-153" fill="var(--accent-blue)"/>
           <circle cx="0" cy="0" r="6" fill="var(--accent-blue)"/>
         </g>
 
         <!-- Heading arrow (inner, closer to center) -->
         <g id="headG" transform="rotate(0)">
-          <polygon id="headArrow" points="-15,-85 15,-85 0,-105" fill="var(--accent-green)"/>
+          <polygon id="headArrow" points="-18,-85 18,-85 0,-108" fill="var(--accent-green)"/>
           <circle cx="0" cy="0" r="6" fill="var(--accent-green)"/>
         </g>
       </svg>
@@ -272,6 +272,7 @@
     let ang=Math.atan2(sp.y,sp.x)*180/Math.PI+90;
     return (ang+360)%360;
   }
+
   let drag=null;
 
   windG.addEventListener('pointerdown',(e)=>{
@@ -307,7 +308,13 @@
   // });
 
 
-  svg.addEventListener('pointermove',(e)=>{if(!drag)return;const ang=clientToAngle(e.clientX,e.clientY);if(drag==='wind')windDir.value=Math.round(ang);else heading.value=Math.round(ang);update();});
+  svg.addEventListener('pointermove',(e)=>{
+    if(drag) {
+      const ang=clientToAngle(e.clientX,e.clientY);
+      if(drag==='wind') windDir.value=Math.round(ang); else heading.value=Math.round(ang);
+      update();
+    }
+  });
   svg.addEventListener('pointerup',()=>drag=null);
   svg.addEventListener('pointerleave',()=>drag=null);
 
