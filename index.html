@@ -39,6 +39,9 @@
   .wheel-wrap{display:flex;justify-content:center;padding:12px}
   svg.wheel{width:100%;max-width:360px;height:auto;_touch-action:none;user-select:none}
 
+  /* windG{touch-action:none;} */
+  /* headG{touch-action:none;} */
+
   .output-large{font-size:28px;font-weight:900}
   .output-sub{color:var(--muted);font-size:13px;margin-top:6px}
 
@@ -313,6 +316,7 @@
       const ang=clientToAngle(e.clientX,e.clientY);
       if(drag==='wind') windDir.value=Math.round(ang); else heading.value=Math.round(ang);
       update();
+      e.preventDefault();
     }
   });
   svg.addEventListener('pointerup',()=>drag=null);
