@@ -44,6 +44,7 @@
 
   .output-large{font-size:28px;font-weight:900}
   .output-sub{color:var(--muted);font-size:13px;margin-top:6px}
+  .output-white{font-size:13px;margin-top:6px}
 
   footer{margin-top:12px;color:var(--muted);font-size:12px;text-align:center}
 
@@ -106,11 +107,34 @@
 <div class="app">
 
   <header style="margin-top: 40px;">
-    <h1>Доставка чебуреків</h1>
+    <!-- <h1>Доставка чебуреків</h1> -->
     <!-- <p class="lead">Dark theme. Drag arrows on dial or use sliders — live updates.</p> -->
   </header>
 
   <section class="card" style="margin-top: 20px;">
+
+    <!-- Wheel -->
+    <div class="wheel-wrap" style="margin-top: 10px;">
+      <svg id="wheel" class="wheel" viewBox="-160 -160 320 320">
+        <circle cx="0" cy="0" r="120" fill="none" stroke="rgba(255,255,255,0.08)" stroke-width="8"/>
+        <circle cx="0" cy="0" r="76" fill="none" stroke="rgba(255,255,255,0.05)"/>
+        <g id="ticks"></g>
+        <g id="nums"></g>
+
+        <!-- Wind arrow (outer) -->
+        <g id="windG" transform="rotate(0)">
+          <polygon id="windArrow" points="-18,-130 18,-130 0,-153" fill="var(--accent-blue)"/>
+          <circle cx="0" cy="0" r="6" fill="var(--accent-blue)"/>
+        </g>
+
+        <!-- Heading arrow (inner, closer to center) -->
+        <g id="headG" transform="rotate(0)">
+          <polygon id="headArrow" points="-18,-85 18,-85 0,-108" fill="var(--accent-green)"/>
+          <circle cx="0" cy="0" r="6" fill="var(--accent-green)"/>
+        </g>
+      </svg>
+    </div>
+
     <!-- Switch -->
     <!-- <div class="row">
       <div class="label-row"><div class="label">Available flight time</div><div class="value-pill" id="timePill">50 min</div></div>
@@ -150,36 +174,20 @@
     </div>
 
 
-    <!-- Wheel -->
-    <div class="wheel-wrap" style="margin-top: 30px;">
-      <svg id="wheel" class="wheel" viewBox="-160 -160 320 320">
-        <circle cx="0" cy="0" r="120" fill="none" stroke="rgba(255,255,255,0.08)" stroke-width="8"/>
-        <circle cx="0" cy="0" r="76" fill="none" stroke="rgba(255,255,255,0.05)"/>
-        <g id="ticks"></g>
-        <g id="nums"></g>
-
-        <!-- Wind arrow (outer) -->
-        <g id="windG" transform="rotate(0)">
-          <polygon id="windArrow" points="-18,-130 18,-130 0,-153" fill="var(--accent-blue)"/>
-          <circle cx="0" cy="0" r="6" fill="var(--accent-blue)"/>
-        </g>
-
-        <!-- Heading arrow (inner, closer to center) -->
-        <g id="headG" transform="rotate(0)">
-          <polygon id="headArrow" points="-18,-85 18,-85 0,-108" fill="var(--accent-green)"/>
-          <circle cx="0" cy="0" r="6" fill="var(--accent-green)"/>
-        </g>
-      </svg>
-    </div>
-
 
     <!-- Outputs -->
     <div class="row" style="margin-top: 30px;">
       <div style="display:flex;justify-content:space-between">
-        <div><div class="output-large" id="rangeOut">— km</div><div class="output-sub">Максимальна відстань доставки</div></div>
-        <div style="text-align:right"><div style="font-weight:700">Vₐ = 22 m/s</div><div class="output-sub" id="enduranceOut">— s</div></div>
+        <div>
+          <div class="output-large" id="rangeOut">— km</div><div class="output-sub">Максимальна відстань доставки</div>
+        </div>
+        <div style="text-align:right">
+          <div style="font-weight:700">Vₐ = 22 m/s</div>
+          <div class="output-white" id="enduranceOut">— s</div>
+        </div>
       </div>
-      <div class="output-sub" id="logicText"></div>
+      
+      <div class="output-sub" id="logicText" style="margin-top: 20px;"></div>
     </div>
 
     <br/>
@@ -210,7 +218,8 @@
   const windDir=el('windDir'),windDirP=el('windDirP');
   const heading=el('heading'),headingP=el('headingP');
   const windG=el('windG'),headG=el('headG');
-  const rangeOut=el('rangeOut'),enduranceOut=el('enduranceOut'),logicText=el('logicText');
+  const rangeOut=el('rangeOut'),enduranceOut=el('enduranceOut'),
+  logicText=el('logicText');
   const svg=el('wheel'),ticksG=el('ticks'),numsG=el('nums');
 
   // draw ticks
@@ -246,6 +255,7 @@
     headG.setAttribute('transform','rotate('+heading.value+')');
     compute();
   }
+
   function compute(){
     const W=+windSpeed.value, wd=+windDir.value, hd=+heading.value;
     const endurance=minutes*60;enduranceOut.textContent=endurance+' s';
@@ -257,7 +267,10 @@
     if(Vg<0)Vg=0;
     const range=Vg*endurance/1000;
     rangeOut.textContent=(flyable?range.toFixed(2):'0.00')+' km';
-    logicText.textContent=`Va=${Va} m/s, W=${W} m/s, wind=${wd}°, heading=${hd}°. `+
+    
+    logicText.textContent=`
+      Швидкість: Va=${Va} m/s
+      W=${W} m/s, wind=${wd}°, heading=${hd}°. `+
       (flyable?`Vg=${Vg.toFixed(2)} m/s, Range=${range.toFixed(2)} km`:
       `Crosswind too strong → 0 km`);
   }
